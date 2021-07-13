@@ -4,7 +4,7 @@ import { Recipe } from '../common/types';
 
 const baseUrl =
   process.env.REACT_APP_BASE_URL ||
-  'https://recipe-book-server-andrei.herokuapp.com/';
+  'https://recipe-book-server-andrei.herokuapp.com';
 
 export const createRecipe = async (
   recipe: NewRecipe,

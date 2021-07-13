@@ -4,7 +4,7 @@ import { AuthResponse } from '../common/types';
 
 const baseUrl =
   process.env.REACT_APP_BASE_URL ||
-  'https://recipe-book-server-andrei.herokuapp.com/';
+  'https://recipe-book-server-andrei.herokuapp.com';
 
 export const signInUser = async (user: User): Promise<AuthResponse> => {
   const response: AxiosResponse<AuthResponse> = await axios.post(
