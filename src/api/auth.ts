@@ -2,9 +2,13 @@ import axios, { AxiosResponse } from 'axios';
 import { User } from '../common/types';
 import { AuthResponse } from '../common/types';
 
+const baseUrl =
+  process.env.REACT_APP_BASE_URL ||
+  'https://recipe-book-server-andrei.herokuapp.com/';
+
 export const signInUser = async (user: User): Promise<AuthResponse> => {
   const response: AxiosResponse<AuthResponse> = await axios.post(
-    'http://localhost:5000/auth/signin',
+    `${baseUrl}/auth/signin`,
     user
   );
   console.log(response.data);
@@ -13,7 +17,7 @@ export const signInUser = async (user: User): Promise<AuthResponse> => {
 
 export const signUpUser = async (user: User): Promise<AuthResponse> => {
   const response: AxiosResponse<AuthResponse> = await axios.post(
-    'http://localhost:5000/auth/signup',
+    `${baseUrl}/auth/signup`,
     user
   );
   console.log(response.data);

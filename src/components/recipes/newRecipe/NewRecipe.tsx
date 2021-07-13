@@ -191,9 +191,18 @@ export const NewRecipe: React.FC = () => {
   };
 
   const handleSaveClick = async () => {
+    const filteredIngredients = ingredients.filter((ingredient) => {
+      if (
+        ingredient.amount.toString().trim() === '' &&
+        ingredient.name.toString().trim() === ''
+      ) {
+        return false;
+      }
+      return true;
+    });
     const newRecipe: NewRecipeType = {
       title,
-      ingredients,
+      ingredients: filteredIngredients,
       category,
       description,
       servings,

@@ -2,6 +2,10 @@ import axios, { AxiosResponse } from 'axios';
 import { NewRecipe } from '../common/types';
 import { Recipe } from '../common/types';
 
+const baseUrl =
+  process.env.REACT_APP_BASE_URL ||
+  'https://recipe-book-server-andrei.herokuapp.com/';
+
 export const createRecipe = async (
   recipe: NewRecipe,
   token: string
@@ -12,7 +16,7 @@ export const createRecipe = async (
     },
   };
   const response: AxiosResponse<Recipe> = await axios.post(
-    'http://localhost:5000/recipes',
+    `${baseUrl}/recipes`,
     recipe,
     config
   );
@@ -26,7 +30,7 @@ export const getRecipes = async (token: string): Promise<Recipe[]> => {
     },
   };
   const response: AxiosResponse<Recipe[]> = await axios.get(
-    'http://localhost:5000/recipes',
+    `${baseUrl}/recipes`,
     config
   );
 
@@ -44,7 +48,7 @@ export const getRecipeById = async (
   };
 
   const recipe: AxiosResponse<Recipe> = await axios.get(
-    `http://localhost:5000/recipes/${id}`,
+    `${baseUrl}/recipes/${id}`,
     config
   );
 
