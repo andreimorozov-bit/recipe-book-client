@@ -21,17 +21,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     title: {
       margin: '0.5rem 1rem',
-      fontSize: '1.2rem',
+
       fontWeight: 500,
       textTransform: 'capitalize',
     },
     category: {
       margin: '0.5rem 1rem',
-      fontSize: '1.2rem',
     },
     rating: {
       margin: '0.5rem 1rem',
-      fontSize: '1.2rem',
     },
   })
 );
@@ -54,12 +52,13 @@ export const RecipesListItem: React.FC<RecipesListItemProps> = ({ recipe }) => {
               </Link>
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={2}>
               <div className={classes.category}>{recipe.category}</div>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={2}>
               <div className={classes.rating}>
                 <Rating
+                  size='small'
                   name='simple-controlled'
                   readOnly
                   value={recipe.rating}
