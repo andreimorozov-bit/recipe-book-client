@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     amount: {
       width: '5rem',
+      '& input': {},
     },
     units: {
       margin: theme.spacing(1),
@@ -25,11 +26,19 @@ const useStyles = makeStyles((theme: Theme) =>
     name: {
       flexGrow: 1,
     },
-    select: {
-      height: '40px',
-      '& label': {
-        transform: 'translate(40px, 40px)',
-      },
+    // select: {
+    //   height: '40px',
+    //   '& label': {
+    //     transform: 'translate(40px, 40px)',
+    //   },
+    // },
+    clearButton: {
+      width: '35px',
+      height: '35px',
+      margin: '18px 0 0 0',
+    },
+    clearIcon: {
+      padding: '0.5rem',
     },
   })
 );
@@ -61,14 +70,13 @@ export const IngredientFormItem: React.FC<IngredientFormItemProps> = ({
         label='amount'
         value={ingredient.amount}
         onChange={(e) => onAmountChange(e, index)}
-        variant='outlined'
+        variant='standard'
       />
-      <FormControl variant='outlined' className={classes.units}>
+      <FormControl variant='standard' className={classes.units}>
         <InputLabel margin='dense' id='units-label'>
-          Units
+          units
         </InputLabel>
         <Select
-          className={classes.select}
           labelId='units-label'
           id='dunits'
           margin='dense'
@@ -85,11 +93,14 @@ export const IngredientFormItem: React.FC<IngredientFormItemProps> = ({
         className={classes.name}
         margin='dense'
         label='Ingredient'
-        variant='outlined'
+        variant='standard'
         value={ingredient.name}
         onChange={(e) => onIngredientChange(e, index)}
       />
-      <IconButton onClick={() => onIngredientDelete(index)}>
+      <IconButton
+        className={classes.clearButton}
+        onClick={() => onIngredientDelete(index)}
+      >
         <ClearIcon />
       </IconButton>
     </Grid>

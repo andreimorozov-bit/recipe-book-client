@@ -19,20 +19,18 @@ const useStyles = makeStyles((theme: Theme) =>
     rating: {
       display: 'flex',
       '& > *': {
-        margin: '0 0.5rem 0.5rem 0',
+        margin: '0 0.5rem 0.7rem 0',
       },
     },
     servings: {
       display: 'flex',
-      '& button': {
-        padding: '0.5rem',
-      },
+      '& button': {},
     },
     servingsText: {
-      margin: '0.4rem 0.5rem 0 0',
+      margin: '0.7rem 0.5rem 0 0',
     },
     servingsNumber: {
-      margin: '0.4rem 0 0 0',
+      margin: '0.7rem 0 0 0',
       fontWeight: 500,
     },
   })
@@ -85,6 +83,7 @@ export const Details: React.FC<DetailsProps> = ({
             </Typography>
             <Rating
               name='simple-controlled'
+              size='small'
               readOnly
               value={rating}
               emptyIcon={<StarBorderIcon fontSize='inherit' />}

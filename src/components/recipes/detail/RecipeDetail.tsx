@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import { Details } from './Details';
 import { Ingredients } from './Ingredients';
 import { Description } from './Description';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import { useCookies } from 'react-cookie';
 import { Ingredient, Recipe } from '../../../common/types';
-import { getRecipeById } from '../../../api/recipes';
+import { getRecipeById, deleteRecipe } from '../../../api/recipes';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) =>
     rootContainer: {
       marginRight: '500px',
     },
+
+    editButton: {
+      margin: '1rem 0.5rem',
+    },
   })
 );
 
@@ -35,6 +41,7 @@ interface RecipeDetailProps {
 
 export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
   const [recipe, setRecipe] = useState<Recipe>();
@@ -80,6 +87,17 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
     }
   };
 
+  const handleEditClick = () => {
+    history.push(`/recipes/${recipe?.id}/edit`);
+  };
+
+  const handleDeleteClick = async () => {
+    if (recipe) {
+      await deleteRecipe(recipe.id, cookies.jwtToken);
+      history.replace('/recipes');
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Typography variant='h5' className={classes.title}>
@@ -103,6 +121,22 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
           <Ingredients newIngredients={newIngredients} recipe={recipe} />
         )}
         {recipe && <Description recipe={recipe} />}
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleEditClick}
+          className={classes.editButton}
+        >
+          Edit
+        </Button>
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={handleDeleteClick}
+          className={classes.editButton}
+        >
+          delete
+        </Button>
       </Grid>
     </div>
   );

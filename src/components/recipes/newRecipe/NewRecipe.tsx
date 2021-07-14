@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -22,9 +22,10 @@ import { DescriptionForm } from './DescriptionForm';
 import {
   Ingredient,
   NewRecipe as NewRecipeType,
+  Recipe,
   Unit,
 } from '../../../common/types';
-import { createRecipe } from '../../../api/recipes';
+import { createRecipe, updateRecipe } from '../../../api/recipes';
 import { useCookies } from 'react-cookie';
 import { categories } from '../../../common/recipeCategories';
 
@@ -79,12 +80,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const NewRecipe: React.FC = () => {
+interface NewRecipeProps {
+  recipe?: Recipe | null;
+}
+
+export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
   const classes = useStyles();
   const history = useHistory();
-  const [ingredientName, setIngredientName] = useState<string>('');
-  const [unit, setUnit] = useState<string>('gram');
-  const [amount, setAmount] = useState<string>('');
+  const [isNewRecipe, setIsNewRecipe] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [title, setTitle] = useState<string>('');
@@ -94,6 +97,18 @@ export const NewRecipe: React.FC = () => {
     { amount: '', unit: '', name: '' },
   ]);
   const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
+
+  useEffect(() => {
+    if (recipe) {
+      setCategory(recipe.category);
+      setRating(recipe.rating);
+      setDescription(recipe.description);
+      setTitle(recipe.title);
+      setServings(recipe.servings);
+      setIngredients(recipe.ingredients);
+      setIsNewRecipe(false);
+    }
+  }, [recipe]);
 
   const handleTitleChange = (event: React.ChangeEvent<{ value: any }>) => {
     setTitle(event.target.value);
@@ -193,7 +208,7 @@ export const NewRecipe: React.FC = () => {
   const handleSaveClick = async () => {
     const filteredIngredients = ingredients.filter((ingredient) => {
       if (
-        ingredient.amount.toString().trim() === '' &&
+        ingredient.amount.toString().trim() === '' ||
         ingredient.name.toString().trim() === ''
       ) {
         return false;
@@ -208,8 +223,17 @@ export const NewRecipe: React.FC = () => {
       servings,
       rating,
     };
-    const response = await createRecipe(newRecipe, cookies.jwtToken);
-    if (response.id) {
+    let response: Recipe;
+    if (isNewRecipe) {
+      response = await createRecipe(newRecipe, cookies.jwtToken);
+    } else {
+      response = await updateRecipe(
+        newRecipe,
+        cookies.jwtToken,
+        recipe?.id as string
+      );
+    }
+    if (response?.id) {
       history.push(`/recipes/${response.id}`);
     }
   };

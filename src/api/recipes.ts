@@ -23,6 +23,40 @@ export const createRecipe = async (
   return response.data;
 };
 
+export const updateRecipe = async (
+  recipe: NewRecipe,
+  token: string,
+  id: string
+): Promise<Recipe> => {
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  };
+  const response: AxiosResponse<Recipe> = await axios.post(
+    `${baseUrl}/recipes/${id}/edit`,
+    recipe,
+    config
+  );
+  return response.data;
+};
+
+export const deleteRecipe = async (
+  id: string,
+  token: string
+): Promise<Recipe> => {
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  };
+  const response: AxiosResponse<Recipe> = await axios.delete(
+    `${baseUrl}/recipes/${id}`,
+    config
+  );
+  return response.data;
+};
+
 export const getRecipes = async (token: string): Promise<Recipe[]> => {
   const config = {
     headers: {
