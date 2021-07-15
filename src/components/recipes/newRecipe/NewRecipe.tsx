@@ -221,7 +221,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
       category,
       description,
       servings,
-      rating,
+      rating: rating ? rating : 0,
     };
     let response: Recipe;
     if (isNewRecipe) {
@@ -263,8 +263,12 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
                 onChange={handleCategoryChange}
                 label='Category'
               >
-                {Object.keys(categories).map((category) => {
-                  return <MenuItem value={category}>{category}</MenuItem>;
+                {Object.keys(categories).map((category, index) => {
+                  return (
+                    <MenuItem value={category} key={index}>
+                      {category}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>

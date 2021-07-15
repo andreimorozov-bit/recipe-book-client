@@ -1,10 +1,25 @@
 import axios, { AxiosResponse } from 'axios';
+import { GetRecipesDto } from '../common/get-recipes.dto';
 import { NewRecipe } from '../common/types';
 import { Recipe } from '../common/types';
 
 const baseUrl =
   process.env.REACT_APP_BASE_URL ||
   'https://recipe-book-server-andrei.herokuapp.com';
+
+const queryBuilder = (queryParams: GetRecipesDto) => {
+  let query = '?';
+  for (let [key, value] of Object.entries(queryParams)) {
+    if (value && value.length > 0) {
+      query = query + key + '=' + value.toString() + '&';
+    }
+  }
+
+  if (query.length > 1) {
+    return query.slice(0, -1);
+  }
+  return '';
+};
 
 export const createRecipe = async (
   recipe: NewRecipe,
@@ -57,14 +72,25 @@ export const deleteRecipe = async (
   return response.data;
 };
 
-export const getRecipes = async (token: string): Promise<Recipe[]> => {
+export const getRecipes = async (
+  getRecipesDto: GetRecipesDto,
+  token: string
+): Promise<Recipe[]> => {
   const config = {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
   };
+
+  const queryParams: GetRecipesDto = {
+    ...getRecipesDto,
+    category: getRecipesDto.category === 'all' ? '' : getRecipesDto.category,
+  };
+
+  const queryString = queryBuilder(queryParams);
+
   const response: AxiosResponse<Recipe[]> = await axios.get(
-    `${baseUrl}/recipes`,
+    `${baseUrl}/recipes${queryString}`,
     config
   );
 

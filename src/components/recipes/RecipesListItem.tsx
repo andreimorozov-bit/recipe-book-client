@@ -45,28 +45,28 @@ export const RecipesListItem: React.FC<RecipesListItemProps> = ({ recipe }) => {
     <div className={classes.root}>
       <Grid container>
         <Grid item xs={12}>
-          <Grid container>
-            <Grid item xs={6}>
-              <Link className={classes.link} to={`/recipes/${recipe.id}`}>
+          <Link className={classes.link} to={`/recipes/${recipe.id}`}>
+            <Grid container>
+              <Grid item xs={6}>
                 <div className={classes.title}>{recipe.title}</div>
-              </Link>
-            </Grid>
+              </Grid>
 
-            <Grid item xs={2}>
-              <div className={classes.category}>{recipe.category}</div>
+              <Grid item xs={2}>
+                <div className={classes.category}>{recipe.category}</div>
+              </Grid>
+              <Grid item xs={2}>
+                <div className={classes.rating}>
+                  <Rating
+                    size='small'
+                    name='simple-controlled'
+                    readOnly
+                    value={recipe.rating}
+                    emptyIcon={<StarBorderIcon fontSize='inherit' />}
+                  />
+                </div>
+              </Grid>
             </Grid>
-            <Grid item xs={2}>
-              <div className={classes.rating}>
-                <Rating
-                  size='small'
-                  name='simple-controlled'
-                  readOnly
-                  value={recipe.rating}
-                  emptyIcon={<StarBorderIcon fontSize='inherit' />}
-                />
-              </div>
-            </Grid>
-          </Grid>
+          </Link>
         </Grid>
       </Grid>
     </div>
