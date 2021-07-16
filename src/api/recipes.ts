@@ -21,6 +21,31 @@ const queryBuilder = (queryParams: GetRecipesDto) => {
   return '';
 };
 
+export const getRecipes = async (
+  getRecipesDto: GetRecipesDto,
+  token: string
+): Promise<Recipe[]> => {
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  };
+
+  const queryParams: GetRecipesDto = {
+    ...getRecipesDto,
+    category: getRecipesDto.category === 'all' ? '' : getRecipesDto.category,
+  };
+
+  const queryString = queryBuilder(queryParams);
+
+  const response: AxiosResponse<Recipe[]> = await axios.get(
+    `${baseUrl}/recipes${queryString}`,
+    config
+  );
+
+  return response.data;
+};
+
 export const createRecipe = async (
   recipe: NewRecipe,
   token: string
@@ -69,31 +94,6 @@ export const deleteRecipe = async (
     `${baseUrl}/recipes/${id}`,
     config
   );
-  return response.data;
-};
-
-export const getRecipes = async (
-  getRecipesDto: GetRecipesDto,
-  token: string
-): Promise<Recipe[]> => {
-  const config = {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  };
-
-  const queryParams: GetRecipesDto = {
-    ...getRecipesDto,
-    category: getRecipesDto.category === 'all' ? '' : getRecipesDto.category,
-  };
-
-  const queryString = queryBuilder(queryParams);
-
-  const response: AxiosResponse<Recipe[]> = await axios.get(
-    `${baseUrl}/recipes${queryString}`,
-    config
-  );
-
   return response.data;
 };
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { getRecipes } from '../../api/recipes';
@@ -6,6 +6,7 @@ import { Recipe } from '../../common/types';
 import { RecipesListItem } from './RecipesListItem';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -13,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NoRecipes } from './NoRecipes';
 import { categories } from '../../common/recipeCategories';
+import debounce from 'lodash/debounce';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
       minWidth: 120,
     },
-    categorySelect: {
-      margin: '0.5rem 1rem 0.5rem 0',
+    searchInput: {
+      margin: theme.spacing(1),
     },
     noMatch: {
       display: 'flex',
@@ -40,12 +42,13 @@ export const RecipesList: React.FC = () => {
   const [notEmpty, setNotEmpty] = useState<boolean>(false);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [category, setCategory] = useState<string>('all');
+  const [search, setSearch] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       setIsLoading(true);
-      const response = await getRecipes({ category }, cookies.jwtToken);
+      const response = await getRecipes({ category, search }, cookies.jwtToken);
       setRecipes(response);
       setIsLoading(false);
     };
@@ -68,10 +71,26 @@ export const RecipesList: React.FC = () => {
     }
   }, []);
 
+  const debouncedGetRecipes = useCallback(
+    debounce(async (category, searchString: string) => {
+      const response = await getRecipes(
+        { category, search: searchString },
+        cookies.jwtToken
+      );
+      setRecipes(response);
+    }, 1000),
+    []
+  );
+
   const handleCategoryChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
     setCategory(event.target.value as string);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSearch(event.target.value as string);
+    debouncedGetRecipes(category, event.target.value as string);
   };
 
   if (!notEmpty && !isLoading && recipes.length === 0) {
@@ -80,31 +99,44 @@ export const RecipesList: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.categorySelect}>
-        <FormControl
-          variant='outlined'
-          margin='dense'
-          className={classes.formControl}
-        >
-          <InputLabel id='category-select-label'>category</InputLabel>
-          <Select
-            labelId='category-select-label'
-            id='category-select'
-            value={category}
-            onChange={handleCategoryChange}
-            label='category'
+      <Grid container>
+        <Grid item>
+          <FormControl
+            variant='outlined'
+            margin='dense'
+            className={classes.formControl}
           >
-            <MenuItem value='all'>all</MenuItem>
-            {Object.keys(categories).map((category, index) => {
-              return (
-                <MenuItem value={category} key={index}>
-                  {category}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
+            <InputLabel id='category-select-label'>category</InputLabel>
+            <Select
+              labelId='category-select-label'
+              id='category-select'
+              value={category}
+              onChange={handleCategoryChange}
+              label='category'
+            >
+              <MenuItem value='all'>all</MenuItem>
+              {Object.keys(categories).map((category, index) => {
+                return (
+                  <MenuItem value={category} key={index}>
+                    {category}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <TextField
+            className={classes.searchInput}
+            label='search'
+            type='search'
+            margin='dense'
+            variant='outlined'
+            value={search}
+            onChange={handleSearchChange}
+          />
+        </Grid>
+      </Grid>
 
       {notEmpty && !isLoading && recipes.length === 0 && (
         <div className={classes.noMatch}>

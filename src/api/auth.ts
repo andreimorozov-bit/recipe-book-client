@@ -11,7 +11,7 @@ export const signInUser = async (user: User): Promise<AuthResponse> => {
     `${baseUrl}/auth/signin`,
     user
   );
-  console.log(response.data);
+
   return response.data;
 };
 
@@ -20,6 +20,6 @@ export const signUpUser = async (user: User): Promise<AuthResponse> => {
     `${baseUrl}/auth/signup`,
     user
   );
-  console.log(response.data);
+
   return response.data;
 };
