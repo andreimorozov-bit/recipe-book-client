@@ -55,7 +55,7 @@ export const Details: React.FC<DetailsProps> = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid item xs={12} sm={6} md={4}>
         <Typography variant='h6' className={classes.title}>
           Details
         </Typography>

@@ -24,7 +24,7 @@ export const Description: React.FC<DescriptionProps> = ({ recipe }) => {
 
   return (
     <Fragment>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={12}>
         <Typography variant='h6' className={classes.title}>
           Description
         </Typography>

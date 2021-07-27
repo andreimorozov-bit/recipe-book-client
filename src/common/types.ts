@@ -24,6 +24,8 @@ export type NewRecipe = {
   category: string;
   servings: number;
   rating: number | null;
+  image?: File | Blob | string | null;
+  imageName?: string | null;
 };
 
 export type User = {
@@ -43,4 +45,6 @@ export type Recipe = {
   category: string;
   servings: number;
   rating: number | null;
+  image?: File | Blob | string | null;
+  imageName?: string | null;
 };

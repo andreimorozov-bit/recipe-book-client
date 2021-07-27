@@ -10,6 +10,7 @@ import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import { useCookies } from 'react-cookie';
 import { Ingredient, Recipe } from '../../../common/types';
 import { getRecipeById, deleteRecipe } from '../../../api/recipes';
+import { RecipeImage } from './RecipeImage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -109,6 +110,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
         justify='center'
         spacing={3}
       >
+        {recipe?.imageName && <RecipeImage recipe={recipe} />}
         {recipe && newServings && (
           <Details
             onServingsIncrease={handleServingsIncrease}
@@ -121,22 +123,26 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
           <Ingredients newIngredients={newIngredients} recipe={recipe} />
         )}
         {recipe && <Description recipe={recipe} />}
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={handleEditClick}
-          className={classes.editButton}
-        >
-          Edit
-        </Button>
-        <Button
-          variant='contained'
-          color='secondary'
-          onClick={handleDeleteClick}
-          className={classes.editButton}
-        >
-          delete
-        </Button>
+        <Grid container item xs={12} justify='center'>
+          <Grid item>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={handleEditClick}
+              className={classes.editButton}
+            >
+              Edit
+            </Button>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={handleDeleteClick}
+              className={classes.editButton}
+            >
+              delete
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   );

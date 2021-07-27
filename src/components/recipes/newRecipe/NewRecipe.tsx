@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -11,9 +11,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import ClearIcon from '@material-ui/icons/Clear';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import ClearIcon from '@material-ui/icons/Clear';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -28,6 +28,9 @@ import {
 import { createRecipe, updateRecipe } from '../../../api/recipes';
 import { useCookies } from 'react-cookie';
 import { categories } from '../../../common/recipeCategories';
+import { uploadFile } from '../../../api/uploadFile';
+import { baseUrl } from '../../../common/constants';
+import { imageResize } from '../../../common/imageResize';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -65,6 +68,13 @@ const useStyles = makeStyles((theme: Theme) =>
     rating: {
       margin: '0.5rem 0 1rem 0',
     },
+    imageInput: {
+      display: 'none',
+    },
+    selectedImage: {
+      height: '60px',
+      cursor: 'pointer',
+    },
 
     center: {
       display: 'flex',
@@ -76,6 +86,11 @@ const useStyles = makeStyles((theme: Theme) =>
       '& button': {
         margin: '1rem',
       },
+    },
+    clearButton: {
+      width: '35px',
+      height: '35px',
+      margin: '18px 0 0 0',
     },
   })
 );
@@ -90,6 +105,9 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
   const [isNewRecipe, setIsNewRecipe] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [image, setImage] = useState<File | Blob | string | null>(null);
+  const [imageName, setImageName] = useState<string | null | undefined>(null);
+  const [imgObjectUrl, setImgObjectUrl] = useState<string | null>(null);
   const [title, setTitle] = useState<string>('');
   const [servings, setServings] = useState<number>(1);
   const [rating, setRating] = useState<number | null>(0);
@@ -97,6 +115,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
     { amount: '', unit: '', name: '' },
   ]);
   const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (recipe) {
@@ -107,6 +126,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
       setServings(recipe.servings);
       setIngredients(recipe.ingredients);
       setIsNewRecipe(false);
+      setImageName(recipe.imageName);
     }
   }, [recipe]);
 
@@ -191,6 +211,30 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
     setRating(newRating);
   };
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.currentTarget.files && event.currentTarget.files.length > 0) {
+      // const newImage = await imageResize(event.currentTarget.files[0]);
+      setImage(event.currentTarget.files[0]);
+      // setImgObjectUrl(URL.createObjectURL(image));
+      // uploadFile(event.currentTarget.files[0], cookies.jwtToken);
+    }
+  };
+
+  const handleImageClear = () => {
+    if (imageInputRef.current !== null) {
+      imageInputRef.current.value = '';
+    }
+    setImage(null);
+  };
+
+  const handleUploadClick = () => {
+    if (image) {
+      uploadFile(image, cookies.jwtToken);
+    }
+  };
+
   const handleAddIngredientClick = () => {
     const newIngredients = [
       ...ingredients,
@@ -225,10 +269,11 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
     };
     let response: Recipe;
     if (isNewRecipe) {
-      response = await createRecipe(newRecipe, cookies.jwtToken);
+      response = await createRecipe(newRecipe, image, cookies.jwtToken);
     } else {
       response = await updateRecipe(
         newRecipe,
+        image,
         cookies.jwtToken,
         recipe?.id as string
       );
@@ -295,6 +340,50 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
                 onChange={(event, newRating) => handleRatingChange(newRating)}
                 emptyIcon={<StarBorderIcon fontSize='inherit' />}
               />
+            </div>
+            <div>
+              <input
+                className={classes.imageInput}
+                type='file'
+                name='file'
+                accept='image/*'
+                id='file-input'
+                ref={imageInputRef}
+                onChange={handleFileChange}
+              />
+              <label htmlFor='file-input'>
+                {!image && !imageName && (
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    component='span'
+                  >
+                    upload image
+                  </Button>
+                )}
+                {!image && imageName && (
+                  <img
+                    className={classes.selectedImage}
+                    src={`${baseUrl}/recipes/images/${imageName}`}
+                  />
+                )}
+                {image && (
+                  <Fragment>
+                    <img
+                      className={classes.selectedImage}
+                      src={URL.createObjectURL(image)}
+                    />
+                  </Fragment>
+                )}
+              </label>
+              {image && (
+                <IconButton
+                  className={classes.clearButton}
+                  onClick={handleImageClear}
+                >
+                  <ClearIcon />
+                </IconButton>
+              )}
             </div>
           </Grid>
         </div>

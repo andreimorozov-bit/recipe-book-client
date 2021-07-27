@@ -2,10 +2,8 @@ import axios, { AxiosResponse } from 'axios';
 import { GetRecipesDto } from '../common/get-recipes.dto';
 import { NewRecipe } from '../common/types';
 import { Recipe } from '../common/types';
-
-const baseUrl =
-  process.env.REACT_APP_BASE_URL ||
-  'https://recipe-book-server-andrei.herokuapp.com';
+import { uploadFile } from './uploadFile';
+import { baseUrl } from '../common/constants';
 
 const queryBuilder = (queryParams: GetRecipesDto) => {
   let query = '?';
@@ -48,6 +46,7 @@ export const getRecipes = async (
 
 export const createRecipe = async (
   recipe: NewRecipe,
+  file: File | Blob | string | null,
   token: string
 ): Promise<Recipe> => {
   const config = {
@@ -55,19 +54,46 @@ export const createRecipe = async (
       'Authorization': `Bearer ${token}`,
     },
   };
+
+  let fileResponse;
+  let newRecipe: NewRecipe = recipe;
+
+  if (file) {
+    fileResponse = await uploadFile(file, token);
+    newRecipe = {
+      ...recipe,
+      imageName: fileResponse.newFilename,
+    };
+  }
+
   const response: AxiosResponse<Recipe> = await axios.post(
     `${baseUrl}/recipes`,
-    recipe,
+    newRecipe,
     config
   );
+
+  console.log(response.data);
+
   return response.data;
 };
 
 export const updateRecipe = async (
   recipe: NewRecipe,
+  file: File | Blob | string | null,
   token: string,
   id: string
 ): Promise<Recipe> => {
+  let fileResponse;
+  let updatedRecipe: NewRecipe = recipe;
+
+  if (file) {
+    fileResponse = await uploadFile(file, token);
+    updatedRecipe = {
+      ...recipe,
+      imageName: fileResponse.newFilename,
+    };
+  }
+
   const config = {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -75,7 +101,7 @@ export const updateRecipe = async (
   };
   const response: AxiosResponse<Recipe> = await axios.post(
     `${baseUrl}/recipes/${id}/edit`,
-    recipe,
+    updatedRecipe,
     config
   );
   return response.data;
