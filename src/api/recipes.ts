@@ -58,21 +58,19 @@ export const createRecipe = async (
   let fileResponse;
   let newRecipe: NewRecipe = recipe;
 
-  if (file) {
-    fileResponse = await uploadFile(file, token);
-    newRecipe = {
-      ...recipe,
-      imageName: fileResponse.newFilename,
-    };
-  }
-
   const response: AxiosResponse<Recipe> = await axios.post(
     `${baseUrl}/recipes`,
     newRecipe,
     config
   );
 
-  console.log(response.data);
+  if (file) {
+    fileResponse = await uploadFile(file, response.data.id, token);
+    newRecipe = {
+      ...recipe,
+      imageName: fileResponse.newFilename,
+    };
+  }
 
   return response.data;
 };
@@ -86,14 +84,6 @@ export const updateRecipe = async (
   let fileResponse;
   let updatedRecipe: NewRecipe = recipe;
 
-  if (file) {
-    fileResponse = await uploadFile(file, token);
-    updatedRecipe = {
-      ...recipe,
-      imageName: fileResponse.newFilename,
-    };
-  }
-
   const config = {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -104,6 +94,15 @@ export const updateRecipe = async (
     updatedRecipe,
     config
   );
+
+  if (file) {
+    fileResponse = await uploadFile(file, response.data.id, token);
+    updatedRecipe = {
+      ...recipe,
+      imageName: fileResponse.newFilename,
+    };
+  }
+
   return response.data;
 };
 

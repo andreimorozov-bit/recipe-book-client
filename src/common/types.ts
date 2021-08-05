@@ -37,6 +37,10 @@ export type AuthResponse = {
   accessToken: string;
 };
 
+export type RecipeImage = {
+  id: string;
+};
+
 export type Recipe = {
   id: string;
   title: string;
@@ -45,6 +49,6 @@ export type Recipe = {
   category: string;
   servings: number;
   rating: number | null;
-  image?: File | Blob | string | null;
+  image?: RecipeImage | null;
   imageName?: string | null;
 };

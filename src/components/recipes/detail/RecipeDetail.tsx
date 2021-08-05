@@ -110,7 +110,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
         justify='center'
         spacing={3}
       >
-        {recipe?.imageName && <RecipeImage recipe={recipe} />}
+        {recipe?.image && <RecipeImage recipe={recipe} />}
         {recipe && newServings && (
           <Details
             onServingsIncrease={handleServingsIncrease}

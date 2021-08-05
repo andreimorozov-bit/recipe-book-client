@@ -2,7 +2,6 @@ import { Fragment } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
-import { Ingredient } from '../../../common/types';
 import { Recipe } from '../../../common/types';
 
 const useStyles = makeStyles((theme: Theme) =>

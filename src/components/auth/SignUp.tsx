@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { signUpUser } from '../../api/auth';
-import { truncate } from 'fs';
 import { useCookies } from 'react-cookie';
 import { AuthResponse } from '../../common/types';
 

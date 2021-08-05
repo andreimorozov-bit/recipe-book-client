@@ -14,9 +14,6 @@ import {
 } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import logo from '../../assets/favicon30.png';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { useCookies } from 'react-cookie';
 
 const useStyles = makeStyles((theme: Theme) =>

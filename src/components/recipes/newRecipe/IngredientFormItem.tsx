@@ -26,12 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
     name: {
       flexGrow: 1,
     },
-    // select: {
-    //   height: '40px',
-    //   '& label': {
-    //     transform: 'translate(40px, 40px)',
-    //   },
-    // },
     clearButton: {
       width: '35px',
       height: '35px',

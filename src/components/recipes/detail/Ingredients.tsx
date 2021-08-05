@@ -30,7 +30,6 @@ export const Ingredients: React.FC<IngredientsProps> = ({
   newIngredients,
 }) => {
   const classes = useStyles();
-  const { ingredients } = recipe;
 
   return (
     <Fragment>

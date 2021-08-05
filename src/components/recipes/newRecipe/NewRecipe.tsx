@@ -231,7 +231,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
 
   const handleUploadClick = () => {
     if (image) {
-      uploadFile(image, cookies.jwtToken);
+      // uploadFile(image, cookies.jwtToken);
     }
   };
 

@@ -2,9 +2,14 @@ import axios from 'axios';
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
-export const uploadFile = async (file: any, token: string) => {
+export const uploadFile = async (
+  file: any,
+  recipeId: string,
+  token: string
+) => {
   const data = new FormData();
   data.append('file', file);
+  data.append('recipeId', recipeId);
   const config = {
     headers: {
       'Authorization': `Bearer ${token}`,
