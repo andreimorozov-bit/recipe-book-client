@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const baseUrl = process.env.REACT_APP_BASE_URL;
+import { baseUrl } from '../common/constants';
 
 export const uploadFile = async (
   file: any,
