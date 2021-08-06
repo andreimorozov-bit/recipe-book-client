@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { getRecipes } from '../../api/recipes';
-import { Recipe } from '../../common/types';
+import { getRecipes } from '../../../api/recipes';
+import { Recipe } from '../../../common/types';
 import { RecipesListItem } from './RecipesListItem';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -14,8 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { NoRecipes } from './NoRecipes';
-import { categories } from '../../common/recipeCategories';
+import { NoRecipes } from '../NoRecipes';
+import { categories } from '../../../common/recipeCategories';
 import debounce from 'lodash/debounce';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) =>
     noMatch: {
       display: 'flex',
       justifyContent: 'center',
+    },
+    sortContainer: {
+      margin: '1rem 1rem 1rem 0',
     },
     sort: {
       margin: '0 0.5rem 0 1rem',
@@ -191,7 +194,7 @@ export const RecipesList: React.FC = () => {
       </Grid>
       <Grid container>
         <Grid item onClick={handleSortClick}>
-          <Grid container>
+          <Grid container className={classes.sortContainer}>
             <Grid item>
               <Typography className={classes.sort} variant='body1'>
                 Sort by

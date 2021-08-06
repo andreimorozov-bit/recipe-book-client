@@ -11,9 +11,12 @@ import { Recipe } from '../../../common/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      padding: '0.5rem',
+    },
     title: {
       color: theme.palette.primary.main,
-      margin: '0.5rem auto',
+      textTransform: 'capitalize',
     },
     rating: {
       display: 'flex',
@@ -54,7 +57,7 @@ export const Details: React.FC<DetailsProps> = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid className={classes.root} item xs={12} sm={6} md={4}>
         <Typography variant='h6' className={classes.title}>
           Details
         </Typography>

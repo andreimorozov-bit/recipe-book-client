@@ -15,6 +15,5 @@ export const uploadFile = async (
     },
   };
   const response = await axios.post(`${baseUrl}/recipes/upload`, data, config);
-  console.log(response.data);
   return response.data;
 };

@@ -6,9 +6,11 @@ import { Ingredient, Recipe } from '../../../common/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      padding: '0.5rem',
+    },
     title: {
       color: theme.palette.primary.main,
-      margin: '0.5rem auto',
     },
     amount: {
       fontWeight: 500,
@@ -33,7 +35,7 @@ export const Ingredients: React.FC<IngredientsProps> = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} sm={12} md={4}>
+      <Grid className={classes.root} item xs={12} sm={12} md={4}>
         <Typography variant='h6' className={classes.title}>
           Ingredients
         </Typography>

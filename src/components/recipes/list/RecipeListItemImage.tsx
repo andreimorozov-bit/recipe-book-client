@@ -4,31 +4,38 @@ import { Recipe } from '../../../common/types';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { getFile } from '../../../api/getFile';
 
-interface RecipeImageProps {
-  recipe: Recipe;
+interface RecipeListItemImageProps {
+  imageId: string | undefined;
+  title: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     image: {
-      maxWidth: '90vw',
-      maxHeight: '90vw',
-      padding: '0.5rem',
+      width: '195px',
+      height: '195px',
+      margin: '0.5rem',
+      maxWidth: '30vw',
+      maxHeight: '30vw',
       '& img': {
         width: '100%',
         height: 'auto',
+        overflow: 'hidden',
       },
     },
   })
 );
 
-export const RecipeImage: React.FC<RecipeImageProps> = ({ recipe }) => {
+export const RecipeListItemImage: React.FC<RecipeListItemImageProps> = ({
+  imageId,
+  title,
+}) => {
   const classes = useStyles();
   const [recipeImage, setRecipeImage] = useState<string | null>(null);
   useEffect(() => {
-    if (recipe.image && recipe.image.id) {
+    if (imageId) {
       const getImage = async () => {
-        const response = await getFile(recipe.image?.id);
+        const response = await getFile(imageId);
         setRecipeImage(URL.createObjectURL(response));
       };
 
@@ -37,10 +44,10 @@ export const RecipeImage: React.FC<RecipeImageProps> = ({ recipe }) => {
   }, []);
 
   return (
-    <Grid container justify='center' item xs={12} sm={6} md={4}>
+    <Grid container justify='flex-start' item>
       {recipeImage && (
         <div className={classes.image}>
-          <img src={recipeImage} alt='recipe' />
+          <img src={recipeImage} alt={title} />
         </div>
       )}
     </Grid>

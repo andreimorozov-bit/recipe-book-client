@@ -106,9 +106,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ id }) => {
       </Typography>
       <Grid
         container
-        className={classes.rootContainer}
+        // className={classes.rootContainer}
         justify='center'
-        spacing={3}
       >
         {recipe?.image && <RecipeImage recipe={recipe} />}
         {recipe && newServings && (
