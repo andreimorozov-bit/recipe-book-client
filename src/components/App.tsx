@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from './ui/theme';
 import Button from '@material-ui/core/Button';
@@ -10,6 +10,7 @@ import { RecipesListPage } from '../pages/RecipesList';
 import { SignUpPage } from '../pages/SignUp';
 import { SignInPage } from '../pages/SignIn';
 import { HomePage } from '../pages/Home';
+import { RecipeEditPage } from '../pages/RecipeEdit';
 
 function App() {
   return (
@@ -26,8 +27,11 @@ function App() {
           <Route path='/recipes' exact>
             <RecipesListPage />
           </Route>
-          <Route path='/recipes/:id'>
+          <Route path='/recipes/:id' exact>
             <RecipeDetailPage />
+          </Route>
+          <Route path='/recipes/:id/edit' exact>
+            <RecipeEditPage />
           </Route>
           <Route path='/signin/google' exact>
             <Button variant='contained' color='secondary'>

@@ -2,11 +2,13 @@ import { Fragment } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
-import { Ingredient } from '../../../common/types';
 import { Recipe } from '../../../common/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      padding: '0.5rem',
+    },
     title: {
       color: theme.palette.primary.main,
       margin: '0.5rem auto',
@@ -24,7 +26,7 @@ export const Description: React.FC<DescriptionProps> = ({ recipe }) => {
 
   return (
     <Fragment>
-      <Grid item xs={12} md={6}>
+      <Grid className={classes.root} item xs={12} md={12}>
         <Typography variant='h6' className={classes.title}>
           Description
         </Typography>

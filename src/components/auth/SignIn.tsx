@@ -33,7 +33,6 @@ export const SignIn: React.FC = () => {
   const classes = useStyles();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
   const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
   const history = useHistory();
 

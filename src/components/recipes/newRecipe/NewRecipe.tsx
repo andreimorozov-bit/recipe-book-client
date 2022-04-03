@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -11,22 +11,23 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import ClearIcon from '@material-ui/icons/Clear';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import ClearIcon from '@material-ui/icons/Clear';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import { IngredientFormItem } from './IngredientFormItem';
-import { DescriptionForm } from './DescriptionForm';
 import {
   Ingredient,
   NewRecipe as NewRecipeType,
+  Recipe,
   Unit,
 } from '../../../common/types';
-import { createRecipe } from '../../../api/recipes';
+import { createRecipe, updateRecipe } from '../../../api/recipes';
 import { useCookies } from 'react-cookie';
 import { categories } from '../../../common/recipeCategories';
+import { DescriptionForm } from './DescriptionForm';
+import { IngredientFormItem } from './IngredientFormItem';
+import { baseUrl } from '../../../common/constants';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,6 +65,13 @@ const useStyles = makeStyles((theme: Theme) =>
     rating: {
       margin: '0.5rem 0 1rem 0',
     },
+    imageInput: {
+      display: 'none',
+    },
+    selectedImage: {
+      height: '60px',
+      cursor: 'pointer',
+    },
 
     center: {
       display: 'flex',
@@ -76,24 +84,48 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: '1rem',
       },
     },
+    clearButton: {
+      width: '35px',
+      height: '35px',
+      margin: '18px 0 0 0',
+    },
   })
 );
 
-export const NewRecipe: React.FC = () => {
+interface NewRecipeProps {
+  recipe?: Recipe | null;
+}
+
+export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
   const classes = useStyles();
   const history = useHistory();
-  const [ingredientName, setIngredientName] = useState<string>('');
-  const [unit, setUnit] = useState<string>('gram');
-  const [amount, setAmount] = useState<string>('');
+  const [isNewRecipe, setIsNewRecipe] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [image, setImage] = useState<File | Blob | string | null>(null);
+  const [imageName, setImageName] = useState<string | null | undefined>(null);
+
   const [title, setTitle] = useState<string>('');
   const [servings, setServings] = useState<number>(1);
   const [rating, setRating] = useState<number | null>(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { amount: '', unit: '', name: '' },
   ]);
-  const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
+  const [cookies] = useCookies(['jwtToken']);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (recipe) {
+      setCategory(recipe.category);
+      setRating(recipe.rating);
+      setDescription(recipe.description);
+      setTitle(recipe.title);
+      setServings(recipe.servings);
+      setIngredients(recipe.ingredients);
+      setIsNewRecipe(false);
+      setImageName(recipe.imageName);
+    }
+  }, [recipe]);
 
   const handleTitleChange = (event: React.ChangeEvent<{ value: any }>) => {
     setTitle(event.target.value);
@@ -122,7 +154,7 @@ export const NewRecipe: React.FC = () => {
       event.target.value.length > 0 ? parseInt(event.target.value) : '';
     let newIngredients = [];
     if (
-      (typeof newAmount === 'number' && newAmount >= 0 && newAmount !== NaN) ||
+      (typeof newAmount === 'number' && newAmount >= 0 && !isNaN(newAmount)) ||
       event.target.value === ''
     ) {
       newIngredients = ingredients.map((item, ind) => {
@@ -176,6 +208,30 @@ export const NewRecipe: React.FC = () => {
     setRating(newRating);
   };
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.currentTarget.files && event.currentTarget.files.length > 0) {
+      // const newImage = await imageResize(event.currentTarget.files[0]);
+      setImage(event.currentTarget.files[0]);
+      // setImgObjectUrl(URL.createObjectURL(image));
+      // uploadFile(event.currentTarget.files[0], cookies.jwtToken);
+    }
+  };
+
+  const handleImageClear = () => {
+    if (imageInputRef.current !== null) {
+      imageInputRef.current.value = '';
+    }
+    setImage(null);
+  };
+
+  // const handleUploadClick = () => {
+  //   if (image) {
+  //     // uploadFile(image, cookies.jwtToken);
+  //   }
+  // };
+
   const handleAddIngredientClick = () => {
     const newIngredients = [
       ...ingredients,
@@ -193,7 +249,7 @@ export const NewRecipe: React.FC = () => {
   const handleSaveClick = async () => {
     const filteredIngredients = ingredients.filter((ingredient) => {
       if (
-        ingredient.amount.toString().trim() === '' &&
+        ingredient.amount.toString().trim() === '' ||
         ingredient.name.toString().trim() === ''
       ) {
         return false;
@@ -206,10 +262,20 @@ export const NewRecipe: React.FC = () => {
       category,
       description,
       servings,
-      rating,
+      rating: rating ? rating : 0,
     };
-    const response = await createRecipe(newRecipe, cookies.jwtToken);
-    if (response.id) {
+    let response: Recipe;
+    if (isNewRecipe) {
+      response = await createRecipe(newRecipe, image, cookies.jwtToken);
+    } else {
+      response = await updateRecipe(
+        newRecipe,
+        image,
+        cookies.jwtToken,
+        recipe?.id as string
+      );
+    }
+    if (response?.id) {
       history.push(`/recipes/${response.id}`);
     }
   };
@@ -239,8 +305,12 @@ export const NewRecipe: React.FC = () => {
                 onChange={handleCategoryChange}
                 label='Category'
               >
-                {Object.keys(categories).map((category) => {
-                  return <MenuItem value={category}>{category}</MenuItem>;
+                {Object.keys(categories).map((category, index) => {
+                  return (
+                    <MenuItem value={category} key={index}>
+                      {category}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </FormControl>
@@ -267,6 +337,52 @@ export const NewRecipe: React.FC = () => {
                 onChange={(event, newRating) => handleRatingChange(newRating)}
                 emptyIcon={<StarBorderIcon fontSize='inherit' />}
               />
+            </div>
+            <div>
+              <input
+                className={classes.imageInput}
+                type='file'
+                name='file'
+                accept='image/*'
+                id='file-input'
+                ref={imageInputRef}
+                onChange={handleFileChange}
+              />
+              <label htmlFor='file-input'>
+                {!image && !imageName && (
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    component='span'
+                  >
+                    upload image
+                  </Button>
+                )}
+                {!image && imageName && (
+                  <img
+                    alt=''
+                    className={classes.selectedImage}
+                    src={`${baseUrl}/recipes/images/${imageName}`}
+                  />
+                )}
+                {image && (
+                  <Fragment>
+                    <img
+                      alt=''
+                      className={classes.selectedImage}
+                      src={URL.createObjectURL(image)}
+                    />
+                  </Fragment>
+                )}
+              </label>
+              {image && (
+                <IconButton
+                  className={classes.clearButton}
+                  onClick={handleImageClear}
+                >
+                  <ClearIcon />
+                </IconButton>
+              )}
             </div>
           </Grid>
         </div>
