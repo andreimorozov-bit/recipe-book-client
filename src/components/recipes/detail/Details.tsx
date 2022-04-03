@@ -53,7 +53,7 @@ export const Details: React.FC<DetailsProps> = ({
   onServingsIncrease,
 }) => {
   const classes = useStyles();
-  const { category, servings, rating } = recipe;
+  const { category } = recipe;
 
   return (
     <Fragment>
@@ -87,7 +87,7 @@ export const Details: React.FC<DetailsProps> = ({
               name='simple-controlled'
               size='small'
               readOnly
-              value={rating}
+              value={recipe.rating}
               emptyIcon={<StarBorderIcon fontSize='inherit' />}
             />
           </Grid>

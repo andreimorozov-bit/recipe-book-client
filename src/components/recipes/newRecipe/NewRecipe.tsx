@@ -16,9 +16,6 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import { IngredientFormItem } from './IngredientFormItem';
-import { DescriptionForm } from './DescriptionForm';
 import {
   Ingredient,
   NewRecipe as NewRecipeType,
@@ -28,9 +25,9 @@ import {
 import { createRecipe, updateRecipe } from '../../../api/recipes';
 import { useCookies } from 'react-cookie';
 import { categories } from '../../../common/recipeCategories';
-import { uploadFile } from '../../../api/uploadFile';
+import { DescriptionForm } from './DescriptionForm';
+import { IngredientFormItem } from './IngredientFormItem';
 import { baseUrl } from '../../../common/constants';
-import { imageResize } from '../../../common/imageResize';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -107,14 +104,14 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
   const [description, setDescription] = useState<string>('');
   const [image, setImage] = useState<File | Blob | string | null>(null);
   const [imageName, setImageName] = useState<string | null | undefined>(null);
-  const [imgObjectUrl, setImgObjectUrl] = useState<string | null>(null);
+
   const [title, setTitle] = useState<string>('');
   const [servings, setServings] = useState<number>(1);
   const [rating, setRating] = useState<number | null>(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { amount: '', unit: '', name: '' },
   ]);
-  const [cookies, setCookies, deleteCookies] = useCookies(['jwtToken']);
+  const [cookies] = useCookies(['jwtToken']);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -157,7 +154,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
       event.target.value.length > 0 ? parseInt(event.target.value) : '';
     let newIngredients = [];
     if (
-      (typeof newAmount === 'number' && newAmount >= 0 && newAmount !== NaN) ||
+      (typeof newAmount === 'number' && newAmount >= 0 && !isNaN(newAmount)) ||
       event.target.value === ''
     ) {
       newIngredients = ingredients.map((item, ind) => {
@@ -229,11 +226,11 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
     setImage(null);
   };
 
-  const handleUploadClick = () => {
-    if (image) {
-      // uploadFile(image, cookies.jwtToken);
-    }
-  };
+  // const handleUploadClick = () => {
+  //   if (image) {
+  //     // uploadFile(image, cookies.jwtToken);
+  //   }
+  // };
 
   const handleAddIngredientClick = () => {
     const newIngredients = [
@@ -363,6 +360,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
                 )}
                 {!image && imageName && (
                   <img
+                    alt=''
                     className={classes.selectedImage}
                     src={`${baseUrl}/recipes/images/${imageName}`}
                   />
@@ -370,6 +368,7 @@ export const NewRecipe: React.FC<NewRecipeProps> = ({ recipe }) => {
                 {image && (
                   <Fragment>
                     <img
+                      alt=''
                       className={classes.selectedImage}
                       src={URL.createObjectURL(image)}
                     />
